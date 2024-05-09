@@ -100,7 +100,58 @@ if __name__ == "__main__":
 ### [민웅](./로봇%20시뮬레이션/민웅.py)
 
 ```py
+# 2174_로봇 시뮬레이션_Robot simulation
+import sys
+input = sys.stdin.readline
+dxy = [(0, 1), (-1, 0), (0, -1), (1, 0)]
+direction = {'E': 0, "N": 1, "W": 2, "S": 3}
 
+A, B = map(int, input().split())
+field = [[0]*A for _ in range(B)]
+
+N, M = map(int, input().split())
+robots = {}
+ans = "OK"
+
+for i in range(1, N+1):
+    x, y, d = input().split()
+    x, y = int(x), int(y)
+    robots[i] = ([B-y, x-1, direction[d]])
+    field[B-y][x-1] = i
+
+for _ in range(M):
+    r, o, v = input().split()
+    r, v = int(r), int(v)
+
+    x, y, d = robots[r]
+    nx = x
+    ny = y
+    if o == "F":
+        for i in range(v):
+            nx = nx + dxy[d][0]
+            ny = ny + dxy[d][1]
+            if 0 <= nx <= B-1 and 0 <= ny <= A-1:
+                if field[nx][ny]:
+                    ans = f"Robot {r} crashes into robot {field[nx][ny]}"
+                    break
+            else:
+                ans = f"Robot {r} crashes into the wall"
+                break
+        else:
+            robots[r] = [nx, ny, d]
+            field[nx][ny] = r
+            field[x][y] = 0
+    elif o == "L":
+        d = (d+v)%4
+        robots[r] = [x, y, d]
+    else:
+        d = (d-v)%4
+        robots[r] = [x, y, d]
+
+    if ans != "OK":
+        break
+
+print(ans)
 ```
 
 ### [성구](./로봇%20시뮬레이션/성구.py)
@@ -161,7 +212,57 @@ if __name__ == "__main__":
 ### [민웅](./무기%20공학/민웅.py)
 
 ```py
+# 18430_무기공학
+import sys
+input = sys.stdin.readline
+dxy = [[(1, 0), (0, -1)], [(0, -1), (-1, 0)], [(-1, 0), (0, 1)], [(1, 0), (0, 1)]]
 
+
+def bt(x, y, v, score):
+    global ans
+
+    if y == M:
+        x = x+1
+        y = 0
+
+    if x == N and y == 0:
+        if score > ans:
+            ans = score
+        return
+
+    if not v[x][y]:
+        for ds in dxy:
+            tmp = []
+            tmp_cordi = []
+            for d in ds:
+                nx = x + d[0]
+                ny = y + d[1]
+                if 0 <= nx <= N-1 and 0 <= ny <= M-1 and not v[nx][ny]:
+                    tmp.append(woods[nx][ny])
+                    tmp_cordi.append([nx, ny])
+                else:
+                    break
+            else:
+                tmp_score = sum(tmp) + 2*woods[x][y]
+                for c in tmp_cordi:
+                    v[c[0]][c[1]] = 1
+                v[x][y] = 1
+                bt(x, y+1, v, tmp_score+score)
+                v[x][y] = 0
+                for c in tmp_cordi:
+                    v[c[0]][c[1]] = 0
+    bt(x, y+1, v, score)
+
+
+N, M = map(int, input().split())
+woods = [list(map(int, input().split())) for _ in range(N)]
+
+visited = [[0]*M for _ in range(N)]
+ans = 0
+
+bt(0, -1, visited, 0)
+
+print(ans)
 ```
 
 ### [상미](./무기%20공학/상미.py)
