@@ -767,7 +767,41 @@ if __name__ == "__main__":
 ### [영준](./무기%20공학/영준.py)
 
 ```py
+di = [0, 1, 0, -1]
+dj = [1, 0, -1, 0]
 
+def f(c, org, p):  # org 남은 목재, p 부메랑들의 강도 합
+    global max_v
+    if max_v < p:
+        max_v = p
+    if c>=N*M:
+        return
+    i = c//M
+    j = c%M
+
+    if org[i][j] == 0:     # 중심으로 활용
+        for k in range(4):
+            dest = [row[:] for row in org]
+            ni1, nj1 = i+di[k], j+dj[k]
+            ni2, nj2 = i+di[(k+1)%4], j+dj[(k+1)%4]
+            if 0<=ni1<N and 0<=nj1<M and 0<=ni2<N and 0<=nj2<M:
+                if org[ni1][nj1]==0 and org[ni2][nj2]==0:
+                    dest[i][j] = 1
+                    dest[ni1][nj1] = 1
+                    dest[ni2][nj2] = 1
+                    f(c+1, dest, p + arr[i][j]*2+arr[ni1][nj1]+arr[ni2][nj2])
+    dest = [row[:] for row in org]
+    f(c+1, dest, p)
+
+N, M = map(int, input().split())
+arr = [list(map(int, input().split())) for _ in range(N)]
+used = [[0]*M for _ in range(N)]
+if N<2 or M<2:
+    print(0)
+else:
+    max_v = 0
+    f(0, used, 0)
+    print(max_v)
 ```
 
 </details>
