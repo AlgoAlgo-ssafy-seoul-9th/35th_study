@@ -113,7 +113,20 @@ if __name__ == "__main__":
 ### [영준](./마라톤1/영준.py)
 
 ```py
+N = int(input())
+cp = [list(map(int, input().split())) for _ in range(N)]
 
+# i-1에서 i까지 거리
+dis = [0]+[abs(cp[i-1][0]-cp[i][0])+abs(cp[i-1][1]-cp[i][1]) for i in range(1, N)]
+# i-2에서 i까지 거리 skip[i]
+skip = [0,0]+[abs(cp[i-2][0]-cp[i][0])+abs(cp[i-2][1]-cp[i][1]) for i in range(2, N)]
+
+max_diff = 0
+for i in range(2, N):   # i-1을 거쳐건 경우와 건너뛴 경우의 차이가 가장 큰 경우
+    if dis[i-1]+dis[i] >= skip[i] and max_diff<dis[i-1]+dis[i] -skip[i]:
+        max_diff = dis[i - 1] + dis[i] - skip[i]
+
+print(sum(dis)-max_diff)
 ```
 
 <br/>
