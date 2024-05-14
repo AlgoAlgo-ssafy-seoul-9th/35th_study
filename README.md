@@ -275,19 +275,19 @@ def main():
         idx, order, repeat = input().strip().split()
         orders.append((int(idx), order, int(repeat)))
 
-    
+
 
     def isCrash(robot_idx, nx, ny): # 충돌 확인
         if nx > A or nx < 1 or ny > B or ny < 1:
             print(f"Robot {robot_idx} crashes into the wall")
             return 1
-        
+
         if (nx, ny) in lands:
             print(f"Robot {robot_idx} crashes into robot {indexes[(nx,ny)]}")
             return 1
-        
+
         return 0
-        
+
     def walk(r_idx, x,y,d,repeat):  # F일 때 움직임
         # 방향별 움직임
         move = {
@@ -304,17 +304,17 @@ def main():
             if isCrash(r_idx, nx, ny):
                 is_crashed = True
                 break
-                    
+
         return (is_crashed, nx, ny)
-    
+
     def turn(order, d, repeat):     # 방향을 바꿈
         repeat %= 4         # 방향은 4번 돌면 그대로 돌아옴
         direction = ["E", "S", "W", "N"]    # 오른쪽으로 도는 기준 정렬
-        # 왼쪽으로 도는 경우는 
+        # 왼쪽으로 도는 경우는
         # 오른쪽으로 도는 횟수 = (4-왼쪽으로 도는 횟수) 를 만족
-        if order == "L":        
+        if order == "L":
             repeat = 4 - repeat
-        
+
         # 방향별 인덱싱
         if d == "E":
             d = 0
@@ -324,12 +324,12 @@ def main():
             d = 2
         else:
             d = 3
-        
+
         # 원형 큐 알고리즘을 통한 방향 전환 결과 도출
         d += repeat
 
         return direction[d % 4]
-    
+
     # test code
     # test_oder = input().strip()
     # test_d = input().strip()
@@ -445,6 +445,37 @@ print(ans)
 ### [상미](./피자판매/상미.py)
 
 ```py
+## 12퍼
+
+import sys
+input = sys.stdin.readline
+
+want = int(input())
+A, B = map(int, input().split())
+pizzaA = [int(input()) for _ in range(A)]
+pizzaB = [int(input()) for _ in range(B)]
+
+def pizzaPcs(pizza):
+    size = len(pizza)
+    pizza = pizza + pizza
+    sizeDict = {0: 1}
+    for start in range(size):
+        pcs = 0
+        for end in range(start, start+size):
+            pcs += pizza[end]
+            if pcs > want:
+                break
+            sizeDict[pcs] = sizeDict.get(pcs, 0) + 1
+    return sizeDict
+
+ADict = pizzaPcs(pizzaA)
+BDict = pizzaPcs(pizzaB)
+ans = 0
+for key, value in ADict.items():
+        if want - key in BDict:
+            ans += BDict[want - key] * ADict[key]
+
+print(ans)
 
 ```
 
@@ -464,7 +495,7 @@ def main():
     A, B = [0]*m, [0]*n
     for i in range(m):
         A[i] = int(input())
-    
+
     for i in range(n):
         B[i] = int(input())
 
@@ -489,7 +520,7 @@ def main():
                     continue
 
                 # 피자 조각 확인 코드
-                pieces += array[j%length]   
+                pieces += array[j%length]
                 if pieces < needs:
                     candidate[cand_name][pieces] += 1
                 elif pieces == needs:
@@ -497,7 +528,7 @@ def main():
                     break
                 else:
                     break
-        
+
         if fin_num < needs:
             candidate[cand_name][fin_num] += 1
         elif fin_num == needs:
@@ -516,7 +547,7 @@ def main():
     # A를 기준으로 (조건 값 - A의 후보군 값 == B의 후보군 값) 성립하는 경우의 수 체크
     for c in candidate["A"]:
         ans += candidate["B"][needs-c] * candidate["A"][c]
-    
+
     # OUTPUT
     print(ans)
 
